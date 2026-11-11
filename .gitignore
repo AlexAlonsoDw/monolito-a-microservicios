@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Next.js build output
+.next/
+out/
+build/
+
+# Environment files (secrets) — never commit these
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+
+# Local agent tooling (not part of the project)
+.atl/
+
+# Course material (not for redistribution)
+guia_practica_monolito_a_microservicios.pdf
+
+# TypeScript build info
+*.tsbuildinfo
