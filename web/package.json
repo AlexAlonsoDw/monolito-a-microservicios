@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "depcruise": "depcruise src --config .dependency-cruiser.cjs"
   },
   "dependencies": {
     "next": "16.4.6",
@@ -19,6 +20,7 @@
     "@types/pg": "^8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dependency-cruiser": "^18.7.2",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
     "typescript": "^5"

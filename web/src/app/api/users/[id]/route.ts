@@ -1,5 +1,5 @@
 import { errorResponse } from "@/lib/http";
-import { getUser } from "@/modules/users/users.service";
+import { getUser } from "@/modules/users";
 
 // GET /api/users/:id
 export async function GET(

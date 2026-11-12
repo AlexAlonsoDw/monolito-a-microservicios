@@ -1,5 +1,5 @@
 import { errorResponse } from "@/lib/http";
-import { createUser } from "@/modules/users/users.service";
+import { createUser } from "@/modules/users";
 
 // --- Layer 3: HTTP route ---------------------------------------------------
 // The route handler is a thin adapter: parse the request, call the service,
