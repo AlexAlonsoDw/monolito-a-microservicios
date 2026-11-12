@@ -1,23 +1,22 @@
 import { AppError } from "@/lib/errors";
 import type { CreateUserDTO, UserDTO } from "./user.dto";
-import { toUserDTO } from "./user.mapper";
-import * as usersRepository from "./users.repository";
+import { getUsersGateway } from "./users.gateway";
 
 // --- Layer 2: Service ------------------------------------------------------
-// The service holds the BUSINESS RULES (validation, uniqueness, etc.).
-// It talks to the repository for data, but never writes SQL itself.
-// It returns DTOs, never database rows: the wire contract stops here.
+// The service holds the BUSINESS RULES that are independent of any backend:
+// input shape and not-found mapping. It talks to the module's port, never to
+// SQL and never to a concrete adapter.
 
 export async function getUser(id: number): Promise<UserDTO> {
   if (!Number.isInteger(id) || id <= 0) {
     throw new AppError("Invalid user id", 400);
   }
 
-  const row = await usersRepository.findById(id);
-  if (!row) {
+  const user = await getUsersGateway().getById(id);
+  if (!user) {
     throw new AppError(`User ${id} not found`, 404);
   }
-  return toUserDTO(row);
+  return user;
 }
 
 export async function createUser(
@@ -33,13 +32,7 @@ export async function createUser(
     throw new AppError("Name is required", 400);
   }
 
-  // Uniqueness is a business rule: check before inserting for a clean 409.
-  // (The DB UNIQUE constraint is the final safety net.)
-  const existing = await usersRepository.findByEmail(email);
-  if (existing) {
-    throw new AppError("Email already in use", 409);
-  }
-
-  const created = await usersRepository.create({ email, name });
-  return toUserDTO(created);
+  // Uniqueness (409) is enforced by the active gateway: it is a property of
+  // the storage, not of the transport.
+  return getUsersGateway().create({ email, name });
 }
