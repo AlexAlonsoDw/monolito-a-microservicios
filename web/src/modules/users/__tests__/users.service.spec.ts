@@ -12,16 +12,25 @@ describe("users service", () => {
     setUsersGateway(undefined);
   });
 
-  it("rejects a non-integer id with 400", async () => {
-    await expect(getUser(1.5)).rejects.toMatchObject({ status: 400 });
+  it("rejects a blank id with 400", async () => {
+    await expect(getUser("   ")).rejects.toMatchObject({ status: 400 });
   });
 
-  it("rejects a non-positive id with 400", async () => {
-    await expect(getUser(0)).rejects.toMatchObject({ status: 400 });
+  it("rejects an id with illegal characters with 400", async () => {
+    await expect(getUser("abc def")).rejects.toMatchObject({ status: 400 });
   });
 
   it("returns 404 when the user does not exist", async () => {
-    await expect(getUser(123)).rejects.toMatchObject({ status: 404 });
+    await expect(getUser("123")).rejects.toMatchObject({ status: 404 });
+  });
+
+  it("trims the id before looking it up", async () => {
+    const created = await createUser({
+      email: "trim@example.com",
+      name: "Trim",
+    });
+
+    await expect(getUser(`  ${created.id}  `)).resolves.toEqual(created);
   });
 
   it("trims input and returns the created DTO", async () => {

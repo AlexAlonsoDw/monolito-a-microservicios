@@ -23,7 +23,8 @@ export function runUsersGatewayContract(harness: GatewayHarness): void {
         name: "Ana",
       });
 
-      expect(user.id).toBeGreaterThan(0);
+      expect(typeof user.id).toBe("string");
+      expect(user.id.length).toBeGreaterThan(0);
       expect(user.email).toBe("ana@example.com");
       expect(user.name).toBe("Ana");
       expect(user.createdAt).toBe(new Date(user.createdAt).toISOString());
@@ -39,7 +40,7 @@ export function runUsersGatewayContract(harness: GatewayHarness): void {
     });
 
     it("returns null for an unknown id", async () => {
-      await expect(gateway.getById(9_999_999)).resolves.toBeNull();
+      await expect(gateway.getById("9999999")).resolves.toBeNull();
     });
 
     it("rejects a duplicate email with status 409", async () => {

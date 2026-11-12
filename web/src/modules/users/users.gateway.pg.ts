@@ -11,7 +11,14 @@ import * as usersRepository from "./users.repository";
 export function createPgUsersGateway(): UsersGateway {
   return {
     async getById(id) {
-      const row = await usersRepository.findById(id);
+      // The contract id is an opaque string. In PostgreSQL it must be a
+      // positive integer; anything else simply cannot exist there.
+      const numericId = toNumericId(id);
+      if (numericId === null) {
+        return null;
+      }
+
+      const row = await usersRepository.findById(numericId);
       return row ? toUserDTO(row) : null;
     },
 
@@ -25,4 +32,13 @@ export function createPgUsersGateway(): UsersGateway {
       return toUserDTO(row);
     },
   };
+}
+
+function toNumericId(value: string): number | null {
+  if (!/^\d+$/.test(value)) {
+    return null;
+  }
+
+  const id = Number(value);
+  return Number.isSafeInteger(id) && id > 0 ? id : null;
 }

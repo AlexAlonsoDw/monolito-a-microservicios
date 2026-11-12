@@ -42,6 +42,6 @@ describe("users gateway configuration", () => {
       USERS_SERVICE_URL: "http://127.0.0.1:1",
     });
 
-    await expect(gateway.getById(1)).rejects.toMatchObject({ status: 503 });
+    await expect(gateway.getById("1")).rejects.toMatchObject({ status: 503 });
   });
 });

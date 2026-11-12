@@ -9,7 +9,7 @@ export async function GET(
   try {
     // In the App Router (Next 15+), `params` is a Promise: you must await it.
     const { id } = await params;
-    const user = await getUser(Number(id));
+    const user = await getUser(id);
     return Response.json(user);
   } catch (error) {
     return errorResponse(error);

@@ -38,7 +38,10 @@ export function createHttpUsersGateway(
 
   return {
     async getById(id) {
-      const response = await request(`${root}/users/${id}`, { method: "GET" });
+      const response = await request(
+        `${root}/users/${encodeURIComponent(id)}`,
+        { method: "GET" },
+      );
 
       if (response.status === 404) {
         return null;
@@ -96,7 +99,7 @@ function parseUserDTO(value: unknown): UserDTO {
 
   const { id, email, name, createdAt } = value;
   if (
-    typeof id !== "number" ||
+    typeof id !== "string" ||
     typeof email !== "string" ||
     typeof name !== "string" ||
     typeof createdAt !== "string"

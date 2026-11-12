@@ -7,7 +7,10 @@ import { pool } from "@/lib/db";
 // The shape of a row as it comes out of PostgreSQL. This type is internal to
 // the module: it must never be returned to consumers as-is (see user.dto.ts).
 export type UserRow = {
-  id: number;
+  // node-postgres returns BIGINT (int8) as a string, because JavaScript
+  // numbers cannot safely represent 64-bit integers. Typing it as string
+  // matches what the driver actually gives us.
+  id: string;
   email: string;
   name: string;
   created_at: Date;

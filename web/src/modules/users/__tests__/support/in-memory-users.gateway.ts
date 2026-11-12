@@ -5,7 +5,7 @@ import type { UsersGateway } from "../../users.port";
 // Test double: an in-memory implementation of the port. It is never shipped to
 // production; it exists so the contract suite can run without a database.
 export function createInMemoryUsersGateway(): UsersGateway {
-  const users = new Map<number, UserDTO>();
+  const users = new Map<string, UserDTO>();
   let nextId = 1;
 
   return {
@@ -20,7 +20,7 @@ export function createInMemoryUsersGateway(): UsersGateway {
       }
 
       const user: UserDTO = {
-        id: nextId++,
+        id: String(nextId++),
         email,
         name,
         createdAt: new Date().toISOString(),

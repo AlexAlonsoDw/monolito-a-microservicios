@@ -4,7 +4,11 @@
 
 /** Output shape returned by the module (and by the HTTP API). */
 export type UserDTO = {
-  id: number;
+  /**
+   * Opaque identifier. It is a string on purpose: PostgreSQL uses BIGINT and
+   * MongoDB uses ObjectId (24 hex chars), and both must fit the same contract.
+   */
+  id: string;
   email: string;
   name: string;
   /** ISO 8601 timestamp, e.g. "2026-11-12T11:53:08.000Z" */

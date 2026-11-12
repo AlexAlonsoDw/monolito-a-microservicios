@@ -10,14 +10,14 @@ import { runUsersGatewayContract } from "./support/contract";
 // end (serialization, status codes, headers) without needing Java.
 
 type StubUser = {
-  id: number;
+  id: string;
   email: string;
   name: string;
   createdAt: string;
 };
 
 function createStubBackend() {
-  const users = new Map<number, StubUser>();
+  const users = new Map<string, StubUser>();
   let nextId = 1;
 
   const server: Server = createServer(async (req, res) => {
@@ -29,7 +29,7 @@ function createStubBackend() {
     };
 
     if (req.method === "GET" && url.pathname.startsWith("/users/")) {
-      const id = Number(url.pathname.split("/").at(-1));
+      const id = url.pathname.split("/").at(-1) ?? "";
       const user = users.get(id);
       if (!user) {
         send(404, { error: "User not found" });
@@ -59,7 +59,7 @@ function createStubBackend() {
       }
 
       const user: StubUser = {
-        id: nextId++,
+        id: String(nextId++),
         email,
         name,
         createdAt: new Date().toISOString(),
@@ -112,7 +112,7 @@ describe("http gateway failure translation", () => {
     stub.reset();
     const gateway = createHttpUsersGateway({ baseUrl });
 
-    await expect(gateway.getById(123)).resolves.toBeNull();
+    await expect(gateway.getById("123")).resolves.toBeNull();
   });
 
   it("maps a connection failure to 503", async () => {
@@ -122,13 +122,13 @@ describe("http gateway failure translation", () => {
       timeoutMs: 500,
     });
 
-    await expect(gateway.getById(1)).rejects.toMatchObject({ status: 503 });
+    await expect(gateway.getById("1")).rejects.toMatchObject({ status: 503 });
   });
 
   it("maps an invalid remote payload to 502", async () => {
     const badBackend = createServer((_req, res) => {
       res.writeHead(200, { "content-type": "application/json" });
-      res.end(JSON.stringify({ id: "not-a-number" }));
+      res.end(JSON.stringify({ id: 123 }));
     });
 
     await new Promise<void>((resolve) => {
@@ -141,7 +141,7 @@ describe("http gateway failure translation", () => {
         baseUrl: `http://127.0.0.1:${address.port}`,
       });
 
-      await expect(gateway.getById(1)).rejects.toMatchObject({ status: 502 });
+      await expect(gateway.getById("1")).rejects.toMatchObject({ status: 502 });
     } finally {
       await new Promise<void>((resolve, reject) => {
         badBackend.close((error) => (error ? reject(error) : resolve()));

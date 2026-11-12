@@ -7,7 +7,7 @@ import type { UserDTO } from "./user.dto";
 
 export interface UsersGateway {
   /** Returns the user, or null when it does not exist. */
-  getById(id: number): Promise<UserDTO | null>;
+  getById(id: string): Promise<UserDTO | null>;
 
   /**
    * Persists a new user and returns it.

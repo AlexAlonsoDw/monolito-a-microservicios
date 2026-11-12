@@ -7,14 +7,19 @@ import { getUsersGateway } from "./users.gateway";
 // input shape and not-found mapping. It talks to the module's port, never to
 // SQL and never to a concrete adapter.
 
-export async function getUser(id: number): Promise<UserDTO> {
-  if (!Number.isInteger(id) || id <= 0) {
+// Ids are opaque strings: numeric in PostgreSQL, ObjectId hex in MongoDB.
+const USER_ID_PATTERN = /^[A-Za-z0-9_-]{1,64}$/;
+
+export async function getUser(id: string): Promise<UserDTO> {
+  const normalizedId = typeof id === "string" ? id.trim() : "";
+
+  if (!USER_ID_PATTERN.test(normalizedId)) {
     throw new AppError("Invalid user id", 400);
   }
 
-  const user = await getUsersGateway().getById(id);
+  const user = await getUsersGateway().getById(normalizedId);
   if (!user) {
-    throw new AppError(`User ${id} not found`, 404);
+    throw new AppError(`User ${normalizedId} not found`, 404);
   }
   return user;
 }
