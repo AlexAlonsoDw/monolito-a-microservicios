@@ -58,3 +58,17 @@ Out of scope:
 
 ## Progress
 - Started: 2026-11-12
+- [x] T1 — `feature/users-dto` merged. DTO + mapper; `created_at` -> `createdAt`.
+- [x] T2 — `feature/users-gateway-port` merged. `UsersGateway` port + pg adapter.
+- [x] T3 — `feature/users-contract-tests` merged. Vitest + contract suite + in-memory fake.
+- [x] T4 — `feature/users-http-adapter` merged. HTTP adapter + in-process stub.
+- [x] T5 — `feature/users-backend-switch` merged. `USERS_BACKEND` / `USERS_SERVICE_URL`.
+
+## Verification (final)
+- `npm test` -> 26 passed, 5 skipped (postgres needs `DATABASE_URL`).
+- `npm run lint`, `npm run depcruise`, `npx tsc --noEmit` -> clean.
+
+## Out of scope / next
+- Move `users` table ownership and drop `orders.user_id` FK before a real extraction.
+- Auth, retries/circuit breaker, observability, API versioning.
+- Set `USERS_BACKEND` in `.env.local` (not committed) to try the HTTP path.
