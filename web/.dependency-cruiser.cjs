@@ -74,7 +74,10 @@ module.exports = {
       severity: "warn",
       comment:
         "A module that nothing imports is dead code (or a forgotten entry point).",
-      from: { orphan: true, pathNot: "^src/app/" },
+      from: {
+        orphan: true,
+        pathNot: ["^src/app/", "\\.spec\\.ts$", "/__tests__/"],
+      },
       to: {},
     },
   ],

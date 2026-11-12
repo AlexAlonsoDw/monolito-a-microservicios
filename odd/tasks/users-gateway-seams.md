@@ -37,6 +37,8 @@ Out of scope:
 - [ ] T2 — Port + PG adapter: `UsersGateway` interface, `createPgUsersGateway`,
       factory defaulting to `pg`. Branch: `feature/users-gateway-port`.
 - [ ] T3 — Contract tests: vitest setup, in-memory gateway, contract + service suites.
+      Tests are colocated in `src/modules/users/__tests__/` so they may import
+      module internals without breaking the boundary rule.
       Branch: `feature/users-contract-tests`.
 - [ ] T4 — HTTP adapter + stub: `createHttpUsersGateway` with status -> AppError mapping,
       `node:http` stub test. Branch: `feature/users-http-adapter`.
