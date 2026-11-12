@@ -1,24 +1,28 @@
 import { AppError } from "@/lib/errors";
+import type { CreateUserDTO, UserDTO } from "./user.dto";
+import { toUserDTO } from "./user.mapper";
 import * as usersRepository from "./users.repository";
 
 // --- Layer 2: Service ------------------------------------------------------
 // The service holds the BUSINESS RULES (validation, uniqueness, etc.).
 // It talks to the repository for data, but never writes SQL itself.
-// Each rule here maps to a user story / requirement.
+// It returns DTOs, never database rows: the wire contract stops here.
 
-export async function getUser(id: number) {
+export async function getUser(id: number): Promise<UserDTO> {
   if (!Number.isInteger(id) || id <= 0) {
     throw new AppError("Invalid user id", 400);
   }
 
-  const user = await usersRepository.findById(id);
-  if (!user) {
+  const row = await usersRepository.findById(id);
+  if (!row) {
     throw new AppError(`User ${id} not found`, 404);
   }
-  return user;
+  return toUserDTO(row);
 }
 
-export async function createUser(input: { email?: string; name?: string }) {
+export async function createUser(
+  input: CreateUserDTO,
+): Promise<UserDTO> {
   const email = input.email?.trim();
   const name = input.name?.trim();
 
@@ -36,5 +40,6 @@ export async function createUser(input: { email?: string; name?: string }) {
     throw new AppError("Email already in use", 409);
   }
 
-  return usersRepository.create({ email, name });
+  const created = await usersRepository.create({ email, name });
+  return toUserDTO(created);
 }
